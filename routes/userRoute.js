@@ -4,6 +4,8 @@ const { validateToken } = require("../middleware/auth");
 const {
   getUserDetails,
   updateUserDetails,
+  forgotPassword,
+  sendResetPasswordLink,
 } = require("../controllers/userController");
 
 const {
@@ -11,6 +13,7 @@ const {
   UserLoginValidator,
   UserRegValidationRules,
   UserLoginValidationRules,
+  ForgotPasswordValidationRules,
 } = require("../middleware/userValidator");
 
 //register
@@ -25,5 +28,11 @@ router.get("/view", validateToken, getUserDetails);
 
 //update user details after token validation
 router.put("/update", validateToken, updateUserDetails);
+
+//forgot password
+router.post("/forgot/password", ForgotPasswordValidationRules, forgotPassword);
+
+//send reset password link
+router.post("/reset/password", sendResetPasswordLink);
 
 module.exports = router;
