@@ -25,5 +25,9 @@ const UserAuthSchema = new Schema({
     type: String,
     required: true,
   },
+  isTempPassword: {
+    type: Boolean,
+    default: false,
+  },
 });
 module.exports = mongoose.model("User", UserAuthSchema);

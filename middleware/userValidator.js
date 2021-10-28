@@ -58,9 +58,15 @@ const UserLoginValidationRules = [
   body("password").isLength({ min: 5 }),
 ];
 
+//validation for forgot password
+const ForgotPasswordValidationRules = [
+  body("email").isEmail().isLength({ min: 7 }).withMessage("Email is required"),
+];
+
 module.exports = {
   UserRegValidator,
   UserLoginValidator,
   UserRegValidationRules,
   UserLoginValidationRules,
+  ForgotPasswordValidationRules,
 };

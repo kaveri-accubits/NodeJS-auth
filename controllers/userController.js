@@ -3,6 +3,7 @@ const { bcryptPassword, comparePassword } = require("../utils/bcrypt");
 //const config = require("../utils/config");
 const { HTTP_STATUS_CODES, JWT } = require("../utils/config");
 const { jwtFunctions } = require("../utils/jwt");
+const { sendMail } = require("../utils/mail");
 saltRounds = 10;
 
 async function UserRegControl(req, res) {
@@ -19,8 +20,14 @@ async function UserRegControl(req, res) {
     //console.log(newUser);
     newUser
       .save()
-      .then((result) => {
+      .then(async (result) => {
         console.log("Result: ", result);
+        var mailParams = {
+          to: email,
+          subject: "Registration Successful",
+          text: "Welcome!",
+        };
+        await sendMail(mailParams);
         res.status(HTTP_STATUS_CODES.CREATED).json({
           message: "User created",
           result: result,
@@ -60,12 +67,19 @@ function UserLoginControl(req, res) {
                 token: token,
               });
             } else {
+              //forgotPassword(req, res);
               res.status(401).json({
                 message: "Password incorrect",
                 success: false,
               });
             }
           });
+          if (isTempPassword) {
+            sendResetPasswordLink(req, res);
+            res.status(200).json({
+              message: "You will be redirected to reset the password",
+            });
+          }
         } else {
           res.status(400).json({
             message: "user not found",
@@ -111,8 +125,75 @@ const updateUserDetails = async (req, res) => {
       user.email = req.body.email;
       user.dob = req.body.dob;
       user.contactNumber = req.body.contactNumber;
+      if (req.body.password) {
+        user.password = await bcryptPassword(req.body.password);
+      }
       user.save();
       res.status(200).json(user);
+    } else {
+      res.status(400).json({
+        message: "User not found",
+      });
+    }
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
+//function for forgot password
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    let user = await User.findOne({ email: req.body.email });
+    if (user) {
+      let newPassword = Math.random().toString(36).slice(-5);
+      console.log("newPassword", newPassword);
+      let hashedPassword = await bcryptPassword(newPassword);
+      user.password = hashedPassword;
+      user.save();
+      let mailParams = {
+        to: user.email,
+        subject: "Password Reset",
+        text: "Your new password is " + newPassword,
+      };
+      await sendMail(mailParams);
+      res.status(200).json({
+        message: "Password reset",
+      });
+      isTempPassword = true;
+    } else {
+      res.status(400).json({
+        message: "User not found",
+      });
+    }
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
+//function to send reset password link after login
+const sendResetPasswordLink = async (req, res) => {
+  try {
+    const { email } = req.body;
+    let user = await User.findOne({ email: req.body.email });
+    if (user) {
+      let token = jwtFunctions(user);
+      let mailParams = {
+        to: user.email,
+        subject: "Reset Password",
+        text: "Click on the link to reset your password",
+        link: "http://localhost:3000/resetPassword/" + token,
+      };
+      await sendMail(mailParams);
+      res.status(200).json({
+        message: "Reset password link sent",
+      });
+      isTempPassword = false;
+      // setTimeout(() => {
+      //   res.status(200).json({
+      //     message: "Reset password link expired",
+      //   });
+      // }, 300000);
     } else {
       res.status(400).json({
         message: "User not found",
@@ -128,4 +209,6 @@ module.exports = {
   UserLoginControl,
   getUserDetails,
   updateUserDetails,
+  forgotPassword,
+  sendResetPasswordLink,
 };
