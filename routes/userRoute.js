@@ -14,6 +14,8 @@ const {
   UserRegValidationRules,
   UserLoginValidationRules,
   ForgotPasswordValidationRules,
+  ResetPasswordValidationRules,
+  ResetPasswordValidator,
 } = require("../middleware/userValidator");
 
 //register
@@ -32,7 +34,11 @@ router.put("/update", validateToken, updateUserDetails);
 //forgot password
 router.post("/forgot/password", ForgotPasswordValidationRules, forgotPassword);
 
-//send reset password link
-router.post("/reset/password", sendResetPasswordLink);
+//reset password
+router.put(
+  "/reset/password",
+  ResetPasswordValidationRules,
+  ResetPasswordValidator
+);
 
 module.exports = router;

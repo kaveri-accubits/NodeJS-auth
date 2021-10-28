@@ -2,6 +2,7 @@ const { body, validationResult } = require("express-validator");
 const {
   UserRegControl,
   UserLoginControl,
+  resetPassword,
 } = require("../controllers/userController");
 
 /**
@@ -63,10 +64,32 @@ const ForgotPasswordValidationRules = [
   body("email").isEmail().isLength({ min: 7 }).withMessage("Email is required"),
 ];
 
+//validation for reset password
+const ResetPasswordValidator = async (req, res) => {
+  const errors = validationResult(req);
+  console.log("error detected", errors);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  } else {
+    resetPassword(req, res);
+  }
+
+  return errors;
+};
+
+const ResetPasswordValidationRules = [
+  body("password").isLength({ min: 5 }).withMessage("Password is required"),
+  body("confirmPassword")
+    .isLength({ min: 5 })
+    .withMessage("Password is required"),
+];
+
 module.exports = {
   UserRegValidator,
   UserLoginValidator,
   UserRegValidationRules,
   UserLoginValidationRules,
   ForgotPasswordValidationRules,
+  ResetPasswordValidationRules,
+  ResetPasswordValidator,
 };

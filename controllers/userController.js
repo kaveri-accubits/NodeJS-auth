@@ -171,29 +171,24 @@ const forgotPassword = async (req, res) => {
   }
 };
 
-//function to send reset password link after login
-const sendResetPasswordLink = async (req, res) => {
+//function to enter a new password and update the password
+const resetPassword = async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email, password, confirmPassword } = req.body;
     let user = await User.findOne({ email: req.body.email });
     if (user) {
-      let token = jwtFunctions(user);
-      let mailParams = {
-        to: user.email,
-        subject: "Reset Password",
-        text: "Click on the link to reset your password",
-        link: "http://localhost:3000/resetPassword/" + token,
-      };
-      await sendMail(mailParams);
-      res.status(200).json({
-        message: "Reset password link sent",
-      });
-      isTempPassword = false;
-      // setTimeout(() => {
-      //   res.status(200).json({
-      //     message: "Reset password link expired",
-      //   });
-      // }, 300000);
+      if (password === confirmPassword) {
+        user.password = await bcryptPassword(password);
+        user.save();
+        isTempPassword = false;
+        res.status(200).json({
+          message: "Password is reset",
+        });
+      } else {
+        res.status(400).json({
+          message: "Password and confirm password do not match",
+        });
+      }
     } else {
       res.status(400).json({
         message: "User not found",
@@ -210,5 +205,5 @@ module.exports = {
   getUserDetails,
   updateUserDetails,
   forgotPassword,
-  sendResetPasswordLink,
+  resetPassword,
 };
