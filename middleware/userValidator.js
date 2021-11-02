@@ -1,4 +1,6 @@
 const { body, validationResult } = require("express-validator");
+const responseUtil = require("../utils/response");
+const responseMessage = require("../utils/responseMessage");
 const {
   UserRegControl,
   UserLoginControl,
@@ -20,7 +22,11 @@ function UserRegValidator(req, res) {
   //console.log("Errors", errors);
 
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return responseUtil.badRequest(
+      res,
+      responseMessage.error.invalidBody,
+      errors.array()
+    );
   } else {
     UserRegControl(req, res);
   }
@@ -43,9 +49,13 @@ const UserRegValidationRules = [
 //login part
 const UserLoginValidator = async (req, res) => {
   const errors = validationResult(req);
-  console.log("error detected", errors);
+  //console.log("error detected", errors);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return responseUtil.badRequest(
+      res,
+      responseMessage.error.invalidBody,
+      errors.array()
+    );
   } else {
     UserLoginControl(req, res);
   }
@@ -64,12 +74,47 @@ const ForgotPasswordValidationRules = [
   body("email").isEmail().isLength({ min: 7 }).withMessage("Email is required"),
 ];
 
+//validation for update user details
+const UpdateUserValidationRules = [
+  body("email").isEmail().isLength({ min: 7 }).withMessage("Email is required"),
+  body("password").isLength({ min: 5 }),
+  body("username").isLength({ min: 6 }),
+  body("dob").isLength({ min: 8 }).withMessage("Date of Birth is required"),
+  body("contactNumber")
+    .isLength({ min: 10 })
+    .isNumeric()
+    .withMessage("Phone Number is required"),
+];
+
+//error validation for update user details
+const UpdateUserValidator = async (req, res) => {
+  const errors = validationResult(req);
+  //console.log("error detected", errors);
+  if (!errors.isEmpty()) {
+    return responseUtil.badRequest(
+      res,
+      responseMessage.error.invalidBody,
+      errors.array()
+    );
+  } else {
+    res.status(200).json({
+      message: "User Details validated",
+    });
+  }
+
+  return errors;
+};
+
 //validation for reset password
 const ResetPasswordValidator = async (req, res) => {
   const errors = validationResult(req);
-  console.log("error detected", errors);
+  //console.log("error detected", errors);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return responseUtil.badRequest(
+      res,
+      responseMessage.error.invalidBody,
+      errors.array()
+    );
   } else {
     resetPassword(req, res);
   }
@@ -92,4 +137,6 @@ module.exports = {
   ForgotPasswordValidationRules,
   ResetPasswordValidationRules,
   ResetPasswordValidator,
+  UpdateUserValidationRules,
+  UpdateUserValidator,
 };

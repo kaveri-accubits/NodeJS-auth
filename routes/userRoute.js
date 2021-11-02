@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { validateToken } = require("../middleware/auth");
+const multer = require("multer");
 const {
   getUserDetails,
   updateUserDetails,
@@ -18,6 +19,8 @@ const {
   ResetPasswordValidator,
 } = require("../middleware/userValidator");
 
+const { upload } = require("../utils/multer");
+
 //register
 
 router.post("/register", UserRegValidationRules, UserRegValidator);
@@ -33,6 +36,12 @@ router.put("/update", validateToken, updateUserDetails);
 
 //forgot password
 router.post("/forgot/password", ForgotPasswordValidationRules, forgotPassword);
+
+//upload profile picture
+router.post("/upload", upload.single("profileImage"), (req, res) => {
+  res.send(req.file);
+  console.log("success", req.file);
+});
 
 //reset password
 router.put(
