@@ -1,38 +1,8 @@
-const { body, validationResult } = require("express-validator");
+const { body, query, validationResult } = require("express-validator");
 const responseUtil = require("../utils/response");
 const responseMessage = require("../utils/responseMessage");
-const {
-  UserRegControl,
-  UserLoginControl,
-  resetPassword,
-} = require("../controllers/userController");
+const { validate } = require("../middleware/validator");
 
-/**
- *Checks For Errors in the Body Fields
- *
- *if Error   -> Send Status Code 400
- *   Success -> Adds to Database
- *
- */
-function UserRegValidator(req, res) {
-  //console.log("Body", req.body);
-
-  // Finds the validation errors in this request and wraps them in an object with handy functions
-  const errors = validationResult(req);
-  //console.log("Errors", errors);
-
-  if (!errors.isEmpty()) {
-    return responseUtil.badRequest(
-      res,
-      responseMessage.error.invalidBody,
-      errors.array()
-    );
-  } else {
-    UserRegControl(req, res);
-  }
-
-  return errors;
-}
 //for registration
 const UserRegValidationRules = [
   body("email").isEmail().isLength({ min: 7 }).withMessage("Email is required"),
@@ -45,23 +15,6 @@ const UserRegValidationRules = [
     .withMessage("Phone Number is required"),
 ];
 /*----------------------------------------------------------------------------------------- */
-
-//login part
-const UserLoginValidator = async (req, res) => {
-  const errors = validationResult(req);
-  //console.log("error detected", errors);
-  if (!errors.isEmpty()) {
-    return responseUtil.badRequest(
-      res,
-      responseMessage.error.invalidBody,
-      errors.array()
-    );
-  } else {
-    UserLoginControl(req, res);
-  }
-
-  return errors;
-};
 
 //validation for login
 const UserLoginValidationRules = [
@@ -86,42 +39,6 @@ const UpdateUserValidationRules = [
     .withMessage("Phone Number is required"),
 ];
 
-//error validation for update user details
-const UpdateUserValidator = async (req, res) => {
-  const errors = validationResult(req);
-  //console.log("error detected", errors);
-  if (!errors.isEmpty()) {
-    return responseUtil.badRequest(
-      res,
-      responseMessage.error.invalidBody,
-      errors.array()
-    );
-  } else {
-    res.status(200).json({
-      message: "User Details validated",
-    });
-  }
-
-  return errors;
-};
-
-//validation for reset password
-const ResetPasswordValidator = async (req, res) => {
-  const errors = validationResult(req);
-  //console.log("error detected", errors);
-  if (!errors.isEmpty()) {
-    return responseUtil.badRequest(
-      res,
-      responseMessage.error.invalidBody,
-      errors.array()
-    );
-  } else {
-    resetPassword(req, res);
-  }
-
-  return errors;
-};
-
 const ResetPasswordValidationRules = [
   body("password").isLength({ min: 5 }).withMessage("Password is required"),
   body("confirmPassword")
@@ -129,14 +46,23 @@ const ResetPasswordValidationRules = [
     .withMessage("Password is required"),
 ];
 
+const listUsers = [
+  query("page")
+    .optional()
+    .isInt({ gt: 0, lt: 10 })
+    .withMessage("Page is required")
+    .bail(),
+  query("size")
+    .optional()
+    .isInt({ gt: 1, lt: 100 })
+    .withMessage("size is required"),
+];
+
 module.exports = {
-  UserRegValidator,
-  UserLoginValidator,
   UserRegValidationRules,
   UserLoginValidationRules,
   ForgotPasswordValidationRules,
   ResetPasswordValidationRules,
-  ResetPasswordValidator,
   UpdateUserValidationRules,
-  UpdateUserValidator,
+  listUsers,
 };

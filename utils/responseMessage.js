@@ -2,6 +2,7 @@ module.exports = {
   user: {
     userNotFound: "User not found",
     userFound: "User found",
+    listShared: "List of shared users",
     userUpdated: "User updated successfully",
     userValidated: "User validated successfully",
     registered: "User Registered successfully",
@@ -19,5 +20,6 @@ module.exports = {
     tokenEmpty: "No token is provided",
     invalidPassword: "Invalid Password",
     invalidBody: "Invalid body fields",
+    unprocessableEntity: "Validation Error",
   },
 };

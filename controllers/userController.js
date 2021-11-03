@@ -12,15 +12,15 @@ const { upload } = require("../utils/multer");
 saltRounds = 10;
 
 //create a function and and make if conditions for true and false
-const isTempPassword = async (req, res) => {
-  const { email } = req.body;
-  const user = await User.findOne({ email });
-  if (user) {
-    return true;
-  } else {
-    return false;
-  }
-};
+// const isTempPassword = async (req, res) => {
+//   const { email } = req.body;
+//   const user = await User.findOne({ email });
+//   if (user) {
+//     return true;
+//   } else {
+//     return false;
+//   }
+// };
 
 /* ---------------------------------------------REGISTRATION --------------------------------------------------------------------*/
 async function UserRegControl(req, res) {
@@ -109,6 +109,7 @@ const getUserDetails = async (req, res) => {
     console.log("req ", req.decoded);
     let userId = req.decoded.userId;
     let user = await User.findById(userId);
+    console.log("user", userId);
 
     return responseUtil.success(res, responseMessage.user.userFound, result);
   } catch (err) {
@@ -119,7 +120,6 @@ const getUserDetails = async (req, res) => {
     );
   }
 };
-
 /* ---------------------------------------------UPDATE USER DETAILS --------------------------------------------------------------------*/
 const updateUserDetails = async (req, res) => {
   try {
@@ -260,6 +260,47 @@ const resetPassword = async (req, res) => {
   }
 };
 
+/* ---------------------------------------------GET THE LIST OF USERS --------------------------------------------------------------------*/
+//get the list of users except the logged in user
+const getAllUsers = async (req, res) => {
+  try {
+    let { page, size, search } = req.query;
+    if (!page) {
+      page = 1;
+    }
+    if (!size) {
+      size = 5;
+    }
+    if (!search) {
+      search = "";
+    }
+    const limit = parseInt(size);
+    const skip = (page - 1) * size;
+
+    let userId = req.decoded.userId;
+    console.log("userId", userId);
+
+    let users = await User.find({ _id: { $ne: userId } })
+      .limit(limit)
+      .skip(skip);
+
+    let userList = users.map((user) => {
+      return {
+        username: user.username,
+        email: user.email,
+        dob: user.dob,
+      };
+    });
+    return responseUtil.success(res, responseMessage.user.listShared, userList);
+  } catch (err) {
+    return responseUtil.internalServerError(
+      res,
+      responseMessage.error.errorGettingUser,
+      err
+    );
+  }
+};
+
 module.exports = {
   UserRegControl,
   UserLoginControl,
@@ -267,4 +308,5 @@ module.exports = {
   updateUserDetails,
   forgotPassword,
   resetPassword,
+  getAllUsers,
 };

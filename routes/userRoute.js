@@ -1,32 +1,33 @@
 const express = require("express");
 const router = express.Router();
 const { validateToken } = require("../middleware/auth");
-const multer = require("multer");
+const { validate } = require("../middleware/validator");
 const {
+  UserRegControl,
+  UserLoginControl,
   getUserDetails,
   updateUserDetails,
   forgotPassword,
-  sendResetPasswordLink,
+  resetPassword,
+  getAllUsers,
 } = require("../controllers/userController");
 
 const {
-  UserRegValidator,
-  UserLoginValidator,
   UserRegValidationRules,
   UserLoginValidationRules,
   ForgotPasswordValidationRules,
   ResetPasswordValidationRules,
-  ResetPasswordValidator,
+  listUsers,
 } = require("../middleware/userValidator");
 
 const { upload } = require("../utils/multer");
 
 //register
 
-router.post("/register", UserRegValidationRules, UserRegValidator);
+router.post("/register", validate(UserRegValidationRules), UserRegControl);
 
 //login
-router.post("/login", UserLoginValidationRules, UserLoginValidator);
+router.post("/login", validate(UserLoginValidationRules), UserLoginControl);
 
 //get user details after token validation
 router.get("/view", validateToken, getUserDetails);
@@ -46,8 +47,11 @@ router.post("/upload", upload.single("profileImage"), (req, res) => {
 //reset password
 router.put(
   "/reset/password",
-  ResetPasswordValidationRules,
-  ResetPasswordValidator
+  validate(ResetPasswordValidationRules),
+  resetPassword
 );
+
+//to get the list of all users except the logged in user
+router.get("/list", validateToken, validate(listUsers), getAllUsers);
 
 module.exports = router;

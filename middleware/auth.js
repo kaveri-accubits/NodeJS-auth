@@ -9,7 +9,9 @@ const validateToken = (req, res, next) => {
 
     try {
       result = jwt.verify(token, process.env.JWT_KEY);
+
       req.decoded = result;
+      console.log("token verified", result);
       // res.json({message:result});
 
       next();
