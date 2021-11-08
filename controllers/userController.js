@@ -137,7 +137,6 @@ const updateUserDetails = async (req, res) => {
       },
     });
     var uploadImage = multer({ storage: storage }).single("profileImage");
-    //const uploadImage = upload.single("profileImage");
 
     uploadImage(req, res, async (err) => {
       if (err) {
@@ -203,8 +202,6 @@ const forgotPassword = async (req, res) => {
       };
       await sendMail(mailParams);
       return responseUtil.success(res, responseMessage.user.tempPassword, null);
-
-      //let isTempPassword = true;
     } else {
       return responseUtil.badRequest(
         res,
@@ -218,7 +215,6 @@ const forgotPassword = async (req, res) => {
       responseMessage.error.errorGettingUser,
       err
     );
-    // res.status(500).json(err);
   }
 };
 
@@ -261,7 +257,7 @@ const resetPassword = async (req, res) => {
 };
 
 /* ---------------------------------------------GET THE LIST OF USERS --------------------------------------------------------------------*/
-//get the list of users except the logged in user
+
 const getAllUsers = async (req, res) => {
   try {
     let { page, size, search } = req.query;

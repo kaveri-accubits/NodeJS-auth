@@ -9,6 +9,8 @@ module.exports = {
     loggedIn: "User logged in successfully",
     passwordReset: "Password reset successfully",
     tempPassword: "Temporary password sent to your email",
+    success: "Success",
+    delete: "Successfully deleted",
   },
   error: {
     errorRegistering: "Error registering user",
@@ -17,9 +19,12 @@ module.exports = {
     errorGettingUser: "Error getting user",
     errorResettingPassword: "Error resetting password",
     passwordNotMatch: "Password and Confirm password does not match",
+    invalidToken: "Invalid token",
     tokenEmpty: "No token is provided",
     invalidPassword: "Invalid Password",
     invalidBody: "Invalid body fields",
     unprocessableEntity: "Validation Error",
+    internalServerError: "Internal Server Error",
+    failed: "Failed",
   },
 };

@@ -10,7 +10,6 @@ const auth = {
 const transporter = nodemailer.createTransport(mailGun(auth));
 
 const sendMail = async (params) => {
-  //console.log("params", params);
   var mailOptions = {
     from: process.env.FROM_EMAIL,
     to: params.to,
@@ -27,5 +26,5 @@ const sendMail = async (params) => {
     }
   });
 };
-// Exporting the sendmail
+
 module.exports = { sendMail };

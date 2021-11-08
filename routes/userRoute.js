@@ -20,6 +20,14 @@ const {
   listUsers,
 } = require("../middleware/userValidator");
 
+const {
+  getAllEmployees,
+  getEmployeeById,
+  createEmployee,
+  updateEmployee,
+  deleteEmployee,
+} = require("../utils/dummyAPI");
+
 const { upload } = require("../utils/multer");
 
 //register
@@ -51,7 +59,15 @@ router.put(
   resetPassword
 );
 
-//to get the list of all users except the logged in user
+//to get the list of all users
 router.get("/list", validateToken, validate(listUsers), getAllUsers);
+
+/* USING DUMMY API */
+
+router.get("/employees", getAllEmployees);
+router.get("/employee/:id", getEmployeeById);
+router.post("/employee", createEmployee);
+router.put("/employee/:id", updateEmployee);
+router.delete("/employee/:id", deleteEmployee);
 
 module.exports = router;

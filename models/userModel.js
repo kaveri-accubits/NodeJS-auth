@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const { USER } = require("../utils/config");
 
 //user schema
 const UserAuthSchema = new Schema({
@@ -25,6 +26,12 @@ const UserAuthSchema = new Schema({
     type: String,
     required: true,
   },
+
+  userType: {
+    type: Number,
+    default: USER.TYPE.user,
+  },
+
   isTempPassword: {
     type: Boolean,
     default: false,

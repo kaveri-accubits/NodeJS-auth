@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
+const responseUtil = require("../utils/response");
+const responseMessage = require("../utils/responseMessage");
 
 const validateToken = (req, res, next) => {
   const authorizationHeader = req.headers.authorization;
@@ -17,13 +19,14 @@ const validateToken = (req, res, next) => {
       next();
     } catch (err) {
       console.log(err);
-      res.status(500).json("Invalid token!");
+      responseUtil.internalServerError(
+        res,
+        responseMessage.error.invalidToken,
+        err
+      );
     }
   } else {
-    result = {
-      message: "No token is provided!",
-    };
-    res.status(401).send(result);
+    responseUtil.unauthorized(res, responseMessage.error.tokenEmpty, null);
   }
 };
 
