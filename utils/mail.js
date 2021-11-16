@@ -1,5 +1,6 @@
 const nodemailer = require("nodemailer");
 const mailGun = require("nodemailer-mailgun-transport");
+const logger = require("./logger");
 
 const auth = {
   auth: {
@@ -20,9 +21,9 @@ const sendMail = async (params) => {
 
   transporter.sendMail(mailOptions, function (err, data) {
     if (err) {
-      console.log("Error Occurs", err);
+      logger.err("Error Occurs", err);
     } else {
-      console.log("Email sent successfully");
+      logger.info("Email sent successfully");
     }
   });
 };

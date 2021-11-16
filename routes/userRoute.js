@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { validateToken } = require("../middleware/auth");
+const { authMiddleware } = require("../middleware/authentication");
 const { validate } = require("../middleware/validator");
 const {
   UserRegControl,
@@ -10,6 +10,7 @@ const {
   forgotPassword,
   resetPassword,
   getAllUsers,
+  generateRefreshToken,
 } = require("../controllers/userController");
 
 const {
@@ -38,10 +39,10 @@ router.post("/register", validate(UserRegValidationRules), UserRegControl);
 router.post("/login", validate(UserLoginValidationRules), UserLoginControl);
 
 //get user details after token validation
-router.get("/view", validateToken, getUserDetails);
+router.get("/view", authMiddleware, getUserDetails);
 
 //update user details after token validation
-router.put("/update", validateToken, updateUserDetails);
+router.put("/update", authMiddleware, updateUserDetails);
 
 //forgot password
 router.post("/forgot/password", ForgotPasswordValidationRules, forgotPassword);
@@ -49,7 +50,7 @@ router.post("/forgot/password", ForgotPasswordValidationRules, forgotPassword);
 //upload profile picture
 router.post("/upload", upload.single("profileImage"), (req, res) => {
   res.send(req.file);
-  console.log("success", req.file);
+  logger.info("success", req.file);
 });
 
 //reset password
@@ -60,7 +61,10 @@ router.put(
 );
 
 //to get the list of all users
-router.get("/list", validateToken, validate(listUsers), getAllUsers);
+router.get("/list", authMiddleware, validate(listUsers), getAllUsers);
+
+//to get refresh token
+router.post("/refresh", generateRefreshToken);
 
 /* USING DUMMY API */
 

@@ -1,11 +1,12 @@
 const bcrypt = require("bcrypt");
+const logger = require("./logger");
 saltRounds = 10;
 
 const bcryptPassword = async (password) => {
   try {
     return await bcrypt.hash(password, saltRounds);
   } catch (err) {
-    console.log("Error ", err);
+    logger.error("Error " + error);
   }
 };
 
@@ -14,7 +15,7 @@ const comparePassword = async (password, inputPassword) => {
   try {
     return await bcrypt.compare(password, inputPassword);
   } catch (err) {
-    console.log("Error ", err);
+    logger.error("Error " + error);
   }
 };
 

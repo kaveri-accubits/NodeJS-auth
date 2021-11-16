@@ -1,6 +1,7 @@
 const axios = require("axios");
 const responseUtil = require("../utils/response");
 const responseMessage = require("../utils/responseMessage");
+const logger = require("./logger");
 const baseUrl = process.env.DUMMY_API_BASE_URL;
 
 //get all employees
@@ -13,7 +14,7 @@ const getAllEmployees = async (req, res) => {
         employees,
       };
 
-      console.log("result", result);
+      logger.info("result", result);
       return responseUtil.success(res, responseMessage.user.success, data);
     })
     .catch((error) => {
@@ -35,7 +36,7 @@ const getEmployeeById = async (req, res) => {
       let data = {
         employees,
       };
-      console.log("result", result.data);
+      logger.info("result", result.data);
 
       return responseUtil.success(res, responseMessage.user.success, data);
     })

@@ -11,6 +11,7 @@ module.exports = {
     tempPassword: "Temporary password sent to your email",
     success: "Success",
     delete: "Successfully deleted",
+    refreshToken: "token generated successfully",
   },
   error: {
     errorRegistering: "Error registering user",
@@ -21,6 +22,7 @@ module.exports = {
     passwordNotMatch: "Password and Confirm password does not match",
     invalidToken: "Invalid token",
     tokenEmpty: "No token is provided",
+    tokenExpired: "Token expired",
     invalidPassword: "Invalid Password",
     invalidBody: "Invalid body fields",
     unprocessableEntity: "Validation Error",

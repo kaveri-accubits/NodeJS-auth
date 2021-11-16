@@ -1,7 +1,15 @@
 module.exports = {
   // DB_CONSTANTS: dbConstants,
   JWT: {
-    SECRET_KEY: process.env.JWT_KEY,
+    ACCESS_TOKEN: {
+      ACCESS_SECRET_KEY: process.env.JWT_ACCESS_KEY,
+      ACCESS_EXPIRY: process.env.ACCESS_EXPIRY,
+    },
+
+    REFRESH_TOKEN: {
+      REFRESH_SECRET_KEY: process.env.JWT_REFRESH_KEY,
+      REFRESH_EXPIRY: process.env.REFRESH_EXPIRY,
+    },
   },
   HTTP_STATUS_CODES: {
     OK: 200,
@@ -24,5 +32,10 @@ module.exports = {
       admin: 1,
       user: 2,
     },
+  },
+
+  REDIS: {
+    REDIS_HOST: process.env.REDIS_HOST,
+    REDIS_PORT: process.env.REDIS_PORT,
   },
 };
