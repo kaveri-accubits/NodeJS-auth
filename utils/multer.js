@@ -2,7 +2,7 @@ const multer = require("multer");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "./uploads"); // path from our current file to storage location
+    cb(null, "./uploads");
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + "--" + file.originalname);
@@ -15,7 +15,5 @@ const upload = multer({
     fileSize: 1000000,
   },
 });
-
-//let isSingleImage = upload.single("profileImage");
 
 module.exports = { upload };
